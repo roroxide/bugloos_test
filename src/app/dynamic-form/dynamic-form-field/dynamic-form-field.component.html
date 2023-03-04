@@ -1,0 +1,53 @@
+<div [formGroup]="form">
+  <ng-container *ngIf="field.access !== 'none'">
+    <label [attr.for]="field.key">{{field.label}}</label>
+  
+    <div  [ngSwitch]="field.controlType">
+  
+      <input *ngSwitchCase="'textbox'" [formControlName]="field.key"
+              [id]="field.key" [type]="field.type">
+  
+      <select [id]="field.key" *ngSwitchCase="'dropdown'" [formControlName]="field.key">
+        <option *ngFor="let opt of field.options" [value]="opt.key">{{field.format(opt.value)}}</option>
+      </select>
+
+      <textarea *ngSwitchCase="'textarea'" [formControlName]="field.key"></textarea>
+
+      <ng-container *ngSwitchCase="'richtext'">
+        Rich Text Editor ( Not Implemented for test ...)
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'radio'">
+        <ng-container *ngFor="let opt of field.options">
+          <input [id]="field.key + '-' + opt.key" [formControlName]="field.key" [value]="opt.key" type="radio">
+          <label class="small" [attr.for]="field.key + '-' + opt.key">{{field.format(opt.value)}}</label>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'checkbox'">
+        <ng-container *ngFor="let opt of field.options; let i = index" [formArrayName]="field.key">
+          <input [id]="field.key + '-' + opt.key" [formControlName]="i" [value]="field.options[i].value" type="checkbox">
+          <label class="small" [attr.for]="field.key + '-' + opt.key">{{field.format(opt.value)}}</label>
+        </ng-container>
+      </ng-container>
+
+
+      <ng-container *ngSwitchCase="'date-range'" [formArrayName]="field.key">
+        <label class="small" [attr.for]="field.key + '-from'">From </label>
+        <input
+          type="date" [id]="field.key + '-from'"
+          [formControlName]="0"
+        /> &nbsp;
+        <label class="small" [attr.for]="field.key + '-to'">To </label>
+        <input
+          type="date"
+          [id]="field.key + '-to'"
+          [formControlName]="1"
+        />
+      </ng-container>
+  
+    </div>
+  
+    <div class="errorMessage" *ngIf="!isValid">{{field.label}} is required</div>
+  </ng-container>
+</div>
